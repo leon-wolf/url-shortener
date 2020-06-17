@@ -1,4 +1,4 @@
-FROM node
+FROM node:stretch-slim
 WORKDIR /usr/src/app
 
 COPY package*.json ./

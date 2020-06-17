@@ -22,16 +22,44 @@ app.use(express.json());
 app.use(express.static('./public'));
 
 const notFoundPath = path.join(__dirname, 'public/404.html');
-app.get('/:id', async (req, res, next) => {
+app.get('/:id', slowDown({
+  windowMs: 30 * 1000,
+  delayAfter: 1,
+  delayMs: 500,
+}),
+rateLimit({
+  windowMs: 30 * 1000,
+  max: 5,
+}), async (req, res, next) => {
   const {id: slug} = req.params;
   try {
     const url = await urls.findOne({slug});
     if (url) {
+      urls.update({slug: url.slug}, {$set: {clicks: url.clicks + 1}});
       return res.redirect(url.url);
     }
     return res.status(404).sendFile(notFoundPath);
   } catch (error) {
     return res.status(404).sendFile(notFoundPath);
+  }
+});
+
+app.get('/:id/info', slowDown({
+  windowMs: 30 * 1000,
+  delayAfter: 1,
+  delayMs: 500,
+}),
+rateLimit({
+  windowMs: 30 * 1000,
+  max: 5,
+}), async (req, res, next) => {
+  const {id: slug} = req.params;
+  try {
+    const url = await urls.findOne({slug});
+    if (url) {
+      return res.json({clicks: url.clicks});
+    }
+  } catch (error) {
   }
 });
 
@@ -70,9 +98,11 @@ app.post(
           }
         }
         slug = slug.toLowerCase();
+        const clicks=0;
         const newUrl = {
           url,
           slug,
+          clicks,
         };
         const created = await urls.insert(newUrl);
         res.json(created);

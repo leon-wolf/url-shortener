@@ -6,11 +6,19 @@ new Vue({
     error: '',
     formVisible: true,
     created: null,
-    mode: 'new',
+    edit: false,
+    count: '',
+    modeSwitch: 'Check',
+    checked: false,
   },
   methods: {
-    setMode(mode) {
-      this.mode = mode;
+    setMode() {
+      this.edit = !this.edit;
+      if (this.edit) {
+        this.modeSwitch = 'Neu';
+      } else {
+        this.modeSwitch = 'Check';
+      }
     },
     async checkSlug() {
       this.error = '';
@@ -22,7 +30,8 @@ new Vue({
       });
       if (response.ok) {
         const result = await response.json();
-        this.count = result.count;
+        this.count = result.clicks;
+        this.checked = true;
       } else if (response.status === 429) {
         this.error = 'You re sending too many requests. ' +
        'Try again in 30 seconds.';

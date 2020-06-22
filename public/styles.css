@@ -95,3 +95,13 @@ header {
 .created a {
   color: inherit;
 }
+
+.check {
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.75rem;
+  color: #E7ECEF;
+  border: none;
+  background-color: #0F7173;
+  padding: 0.1rem 0.2rem;
+}

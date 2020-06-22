@@ -13,8 +13,8 @@
             <h1>b77dc.xyz</h1>
         </header>
         <main id="app">
-            <button @click="setMode('check')">FOO</button>
-            <template v-if="mode==='new'">
+            <template v-if="!edit">
+
                 <form class="form" v-if="formVisible" @submit.prevent="createUrl()">
                     <div v-if="error" class="error">
                         {{error}}
@@ -28,15 +28,22 @@
                     <p class="created">Your short url is: <a :href="created">{{created}}</a></p>
                 </div>
             </template>
-            <template v-else-if="mode==='check'">
-                <form class="form" @submit.prevent="checkSlug()">
+            <template v-else-if="edit">
+                <form class="form" v-if="!checked" @submit.prevent="checkSlug()">
                     <div class="error" v-if="error">
                         {{error}}
+                    </div>
+                    <div v-if="count">
+                        {{count}}
                     </div>
                     <input type="text" class="input" v-model="slug" id="slug_check" placeholder="slug to check">
                     <button type="submit" class="create">Check</button>
                 </form>
+                <div v-else>
+                    <p class="created">URL <a :href="'https://b77dc.xyz/' + slug">https://b77dc.xyz/{{slug}}</a> was used {{count}} {{count > 1 ? 'times' : 'time'}}.</p>
+                </div>
             </template>
+            <button class="small check" @click="setMode()">{{modeSwitch}}</button>
         </main>
     </div>
 </div>
